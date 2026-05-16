@@ -1,0 +1,14 @@
+[Unit]
+Description=namr — daily Strava activity rename pass
+
+[Timer]
+# Once a day, at 03:30 local time, with up to 30 min jitter to avoid
+# every namr install hitting Strava at the exact same minute.
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=30m
+# If the machine was off at the scheduled time, fire on boot.
+Persistent=true
+Unit=namr-poll.service
+
+[Install]
+WantedBy=timers.target

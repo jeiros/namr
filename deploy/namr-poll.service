@@ -1,0 +1,19 @@
+[Unit]
+Description=namr — one-shot Strava activity rename pass
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/namr
+EnvironmentFile=/opt/namr/.env
+ExecStart=/opt/namr/.venv/bin/namr poll
+StandardOutput=journal
+StandardError=journal
+
+# Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/opt/namr/data
