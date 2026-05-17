@@ -16,10 +16,10 @@ class Settings(BaseSettings):
     anthropic_api_key: str = Field(default="")
     namr_model: str = Field(default="claude-sonnet-4-6")
 
-    # LLM backend: "api" (uses ANTHROPIC_API_KEY against api.anthropic.com)
-    # or "claude_cli" (shells out to `claude -p` — uses your Max plan via
-    # CLAUDE_CODE_OAUTH_TOKEN).
-    namr_backend: str = Field(default="api")
+    # LLM backend: "claude_cli" (shells out to `claude -p` — uses your Max
+    # plan via CLAUDE_CODE_OAUTH_TOKEN) or "api" (uses ANTHROPIC_API_KEY
+    # against api.anthropic.com).
+    namr_backend: str = Field(default="claude_cli")
     namr_claude_cli_path: str = Field(default="claude")
 
     namr_db_path: str = Field(default="data/namr.db")
