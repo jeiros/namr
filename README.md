@@ -49,16 +49,21 @@ cp .env.example .env
 Then pick a Claude backend:
 
 **Option A — Claude Max subscription (default, recommended).** Set
-`NAMR_BACKEND=claude_cli` in `.env`, install the Claude Code CLI, and
-generate a long-lived OAuth token:
+`NAMR_BACKEND=claude_cli` in `.env` and install the Claude Code CLI. The
+CLI must be on `PATH`, or set `NAMR_CLAUDE_CLI_PATH` to its absolute
+path. No `ANTHROPIC_API_KEY` needed.
+
+Auth: the `claude` CLI looks at `CLAUDE_CODE_OAUTH_TOKEN` *and* its
+local credentials file (`~/.claude/.credentials.json`). On a workstation
+where you've already run `claude login`, the credentials file is enough
+— namr will work without the env var. For headless deploys (systemd,
+containers) where there's no credentials file, generate a long-lived
+token and put it in `.env`:
 
 ```bash
 claude setup-token        # opens browser, prints CLAUDE_CODE_OAUTH_TOKEN
 # paste it into .env as CLAUDE_CODE_OAUTH_TOKEN=...
 ```
-
-No `ANTHROPIC_API_KEY` needed. The CLI must be on `PATH`, or set
-`NAMR_CLAUDE_CLI_PATH` to its absolute path.
 
 **Option B — Anthropic API key.** Set `NAMR_BACKEND=api` and fill in
 `ANTHROPIC_API_KEY`. You pay per call; prompt caching keeps the system

@@ -182,8 +182,22 @@ class StravaClient:
         headers["Authorization"] = f"Bearer {access}"
 
         backoff = 2.0
+        r: Optional[httpx.Response] = None
         for attempt in range(4):
-            r = self._http.request(method, path, headers=headers, **kw)
+            try:
+                r = self._http.request(method, path, headers=headers, **kw)
+            except httpx.RequestError as e:
+                # Transient network/TLS issue (ConnectError, ReadError, timeouts,
+                # RemoteProtocolError). Retry with backoff before giving up.
+                log.warning(
+                    "transport_error",
+                    extra={"error": f"{type(e).__name__}: {e}", "attempt": attempt},
+                )
+                if attempt == 3:
+                    raise
+                time.sleep(backoff)
+                backoff *= 2
+                continue
             if r.status_code == 401 and attempt == 0:
                 log.info("got_401_refreshing")
                 access = self._force_refresh()
@@ -201,6 +215,7 @@ class StravaClient:
                 backoff *= 2
                 continue
             return r
+        assert r is not None  # loop only exits via return or raise above
         r.raise_for_status()
         return r
 
