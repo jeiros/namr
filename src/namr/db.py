@@ -104,9 +104,12 @@ def load_token(db_path: Path) -> Optional[sqlite3.Row]:
 
 
 def is_processed(db_path: Path, activity_id: int) -> bool:
+    # dry_run rows are informational — they shouldn't block a later --write run
+    # from actually renaming the activity.
     with connect(db_path) as conn:
         cur = conn.execute(
-            "SELECT 1 FROM processed_activity WHERE activity_id = ?", (activity_id,)
+            "SELECT 1 FROM processed_activity WHERE activity_id = ? AND outcome != 'dry_run'",
+            (activity_id,),
         )
         return cur.fetchone() is not None
 
