@@ -58,6 +58,7 @@ Voice and rules:
 - If the recent-titles list shows a pattern you've been leaning on, deliberately go a different direction.
 - If laps are present and have a recognizable shape (intervals, even splits, fade, negative split, hill repeats), let that shape — not the totals — drive the title.
 - If a segment effort is a PR or KOM, or if it's a named local climb (Tibidabo, Montjuïc, Collserola, Rabassada, etc.), it's fair game to anchor the title to it.
+- If `athlete_count` is present and > 1, the activity was done with others — acknowledge the company when it's natural (e.g. "with the crew", "en colla", "en pareja"). You don't know names; never invent them. Solo activities have no `athlete_count` field in the input.
 
 Return ONLY the title on a single line. No explanation, no quotes, no leading dash."""
 
@@ -133,6 +134,11 @@ def _format_activity_block(activity: dict, recent: list[str]) -> str:
     add("start_local", activity.get("start_local"))
     add("day_of_week", activity.get("day_of_week"))
     add("workout_type", activity.get("workout_type_label"))
+    ac = activity.get("athlete_count")
+    if isinstance(ac, int) and ac > 1:
+        # Only surface when it's actually a group activity. Solo (1) or missing
+        # tells the model nothing useful.
+        add("athlete_count", ac)
 
     place = activity.get("place") or {}
     if place:

@@ -160,6 +160,9 @@ def _project_activity(raw: dict, settings: Settings) -> dict:
         "commute": bool(raw.get("commute")),
         "trainer": bool(raw.get("trainer")),
         "start_latlng": raw.get("start_latlng") or None,
+        # Strava's athlete_count counts the activity owner + companions on a
+        # group activity. 1 means solo; >1 means a group ride/run/etc.
+        "athlete_count": raw.get("athlete_count"),
     }
 
     latlng = activity["start_latlng"]
