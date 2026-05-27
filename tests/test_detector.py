@@ -12,6 +12,9 @@ def test_english_defaults_detected():
         "Morning Workout",
         "Morning Activity",
         "Morning Trail Run",
+        "Pool Swim",           # standalone (no time prefix)
+        "Morning Pool Swim",
+        "pool swim",
         "morning run",         # case-insensitive
         " Morning   Run ",     # whitespace tolerant
     ]
@@ -31,8 +34,21 @@ def test_spanish_defaults_detected():
         "Paseo matinal",
         "Excursión matinal",
         "Natación matinal",
+        "Natación de la mañana",
+        "Natación de mañana",      # locale variant without article
+        "Natación de la tarde",
+        "Paseo de la mañana",
+        "Caminata de mañana",      # LatAm prepositional, no article
+        "Caminata de noche",
+        "Caminata de la tarde",
+        "Caminata matinal",        # adjective form, kept defensively
+        "Excursión de la noche",
         "Entrenamiento matinal",
+        "Entrenamiento de la mañana",
         "Actividad matinal",
+        "Actividad de la tarde",
+        "Vuelta en bici de la mañana",
+        "Salida en bici matinal",
         "carrera matinal",       # case-insensitive
         "Carrera del mediodia",  # accent-insensitive
     ]

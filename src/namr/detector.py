@@ -19,7 +19,7 @@ _EN_SPORTS = [
     "Run", "Trail Run", "Treadmill Run", "Virtual Run",
     "Ride", "Mountain Bike Ride", "Gravel Ride", "E-Bike Ride",
     "E-Mountain Bike Ride", "Virtual Ride", "Handcycle", "Velomobile",
-    "Swim", "Open Water Swim",
+    "Swim", "Open Water Swim", "Pool Swim",
     "Walk", "Hike",
     "Workout", "Weight Training", "Crossfit", "Yoga",
     "Activity",
@@ -29,6 +29,12 @@ _EN_SPORTS = [
     "Windsurf", "Kitesurf",
     "Rock Climb",
     "Soccer",
+]
+
+# English defaults that Strava emits as the sport name alone, with no
+# time-of-day prefix (pool swims, for example, are titled "Pool Swim").
+_EN_STANDALONE = [
+    "Pool Swim",
 ]
 
 
@@ -41,26 +47,40 @@ def _norm(s: str) -> str:
 
 
 def _english_defaults() -> set[str]:
-    return {_norm(f"{t} {s}") for t in _EN_TIMES for s in _EN_SPORTS}
+    combos = {_norm(f"{t} {s}") for t in _EN_TIMES for s in _EN_SPORTS}
+    return combos | {_norm(s) for s in _EN_STANDALONE}
 
 
 # Spanish defaults — patterns Strava localizes to. We list each known variant
 # explicitly. Sports nouns vary by gender; titles include articles.
+# Strava ships both an "adjective" form (matinal/vespertina/...) and a
+# "prepositional" form (de la mañana / de la tarde / ...), and some locales
+# drop the article ("de mañana"), so the prepositional patterns make `la `
+# optional.
 _ES_PATTERNS = [
     # Run
     r"^carrera (matinal|del mediod[ií]a|vespertina|nocturna)$",
-    r"^carrera (de la ma[ñn]ana|del mediod[ií]a|de la tarde|de la noche)$",
+    r"^carrera (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
     # Ride
     r"^vuelta en bici (matinal|del mediod[ií]a|vespertina|nocturna)$",
-    r"^salida en bici (de la ma[ñn]ana|del mediod[ií]a|de la tarde|de la noche)$",
-    # Walk / Hike
+    r"^vuelta en bici (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
+    r"^salida en bici (matinal|del mediod[ií]a|vespertina|nocturna)$",
+    r"^salida en bici (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
+    # Walk / Hike — "paseo" (Iberian) and "caminata" (Latin American)
     r"^paseo (matinal|del mediod[ií]a|vespertino|nocturno)$",
+    r"^paseo (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
+    r"^caminata (matinal|del mediod[ií]a|vespertina|nocturna)$",
+    r"^caminata (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
     r"^excursi[oó]n (matinal|del mediod[ií]a|vespertina|nocturna)$",
+    r"^excursi[oó]n (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
     # Swim
     r"^nataci[oó]n (matinal|del mediod[ií]a|vespertina|nocturna)$",
+    r"^nataci[oó]n (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
     # Workout / generic activity
     r"^entrenamiento (matinal|del mediod[ií]a|vespertino|nocturno)$",
+    r"^entrenamiento (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
     r"^actividad (matinal|del mediod[ií]a|vespertina|nocturna)$",
+    r"^actividad (de (la )?ma[ñn]ana|del mediod[ií]a|de (la )?tarde|de (la )?noche)$",
 ]
 
 # Catalan defaults
